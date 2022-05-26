@@ -31,7 +31,7 @@ var builder = Host.CreateDefaultBuilder(args)
         
         // SerialPort
         services.AddSingleton<CatcherWorker>();
-        services.AddTransient<ParserWorker>();
+        services.AddSingleton<ParserWorker>();
 
         services.AddHostedService<BodetLinkHostedService>();
     });

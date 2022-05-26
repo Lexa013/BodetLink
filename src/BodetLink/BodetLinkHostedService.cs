@@ -9,16 +9,20 @@ public class BodetLinkHostedService : IHostedService
     
     public Task StartAsync(CancellationToken cancellationToken)
     {
-        _catcherWorker.Start();
-        _parserWorker.Start();
+        var catcher = _catcherWorker;
+        var parser = _parserWorker;
+
+        catcher.MessageCompleted += parser.OnMessageCompleted;
         
         return Task.CompletedTask;
     }
 
     public Task StopAsync(CancellationToken cancellationToken)
     {
-        _catcherWorker.Stop();
-        _parserWorker.Stop();
+        var catcher = _catcherWorker;
+        var parser = _parserWorker;
+        
+        catcher.MessageCompleted -= parser.OnMessageCompleted;
         
         return Task.CompletedTask;
     }

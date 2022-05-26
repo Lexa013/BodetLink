@@ -1,12 +1,11 @@
 using System.IO.Ports;
 using BodetLink.EventArgs;
 using BodetLink.Options;
-using BodetLink.SeedWork;
 using Microsoft.Extensions.Options;
 
 namespace BodetLink.Workers;
 
-public class CatcherWorker : Worker
+public class CatcherWorker
 {
     private readonly ILogger<CatcherWorker> _logger;
     private readonly IOptions<SerialPortOptions> _options;
@@ -15,17 +14,7 @@ public class CatcherWorker : Worker
     private string _tempMessage;
 
     public event EventHandler MessageCompleted;
-    
-    public override void Start()
-    {
-        _serialPort.DataReceived += OnDataReceived;
-    }
-    
-    public override void Stop()
-    {
-        _serialPort.DataReceived -= OnDataReceived;
-    }
-    
+
     private void OnDataReceived(object sender, SerialDataReceivedEventArgs e)
     {
         var rawData = (sender as SerialPort)?.ReadLine();
@@ -66,5 +55,8 @@ public class CatcherWorker : Worker
             DataBits = _options.Value.DataBits,
             StopBits = _options.Value.StopBits
         };
+        
+        _serialPort.DataReceived += OnDataReceived;
+        _serialPort.Open();
     }
 }
