@@ -1,5 +1,6 @@
+using BodetLink;
 using BodetLink.Options;
-using BodetLink.Services;
+using BodetLink.Workers;
 using Serilog;
 
 var builder = Host.CreateDefaultBuilder(args)
@@ -29,8 +30,10 @@ var builder = Host.CreateDefaultBuilder(args)
             }));
         
         // SerialPort
-        services.AddHostedService<CatcherService>();
-        services.AddHostedService<ParserService>();
+        services.AddSingleton<CatcherWorker>();
+        services.AddTransient<ParserWorker>();
+
+        services.AddHostedService<BodetLinkHostedService>();
     });
 
 var app = builder.Build();

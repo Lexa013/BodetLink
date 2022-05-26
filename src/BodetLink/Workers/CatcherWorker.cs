@@ -1,13 +1,14 @@
 using System.IO.Ports;
 using BodetLink.EventArgs;
 using BodetLink.Options;
+using BodetLink.SeedWork;
 using Microsoft.Extensions.Options;
 
-namespace BodetLink.Services;
+namespace BodetLink.Workers;
 
-public class CatcherService : IHostedService
+public class CatcherWorker : Worker
 {
-    private readonly ILogger<CatcherService> _logger;
+    private readonly ILogger<CatcherWorker> _logger;
     private readonly IOptions<SerialPortOptions> _options;
     
     private SerialPort _serialPort;
@@ -15,19 +16,14 @@ public class CatcherService : IHostedService
 
     public event EventHandler MessageCompleted;
     
-    public Task StartAsync(CancellationToken cancellationToken)
+    public override void Start()
     {
         _serialPort.DataReceived += OnDataReceived;
-        
-        return Task.CompletedTask;
     }
     
-
-    public Task StopAsync(CancellationToken cancellationToken)
+    public override void Stop()
     {
         _serialPort.DataReceived -= OnDataReceived;
-        
-        return Task.CompletedTask;
     }
     
     private void OnDataReceived(object sender, SerialDataReceivedEventArgs e)
@@ -57,7 +53,7 @@ public class CatcherService : IHostedService
         handler?.Invoke(this, e);
     }
 
-    public CatcherService(ILogger<CatcherService> logger, IOptions<SerialPortOptions> options)
+    public CatcherWorker(ILogger<CatcherWorker> logger, IOptions<SerialPortOptions> options)
     {
         _logger = logger;
         _options = options;
